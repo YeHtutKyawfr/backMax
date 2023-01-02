@@ -1,6 +1,5 @@
-/* controllers and api mixed */
 
-const Tutorial = require("../database/repositories/users.ts");
+const User = require("../database/repositories/users.ts");
 
 exports.create = (req, res) => {
   // Validate request
@@ -10,60 +9,63 @@ exports.create = (req, res) => {
     });
   }
 
-  // Create a Tutorial
-  const tutorial = new Tutorial({
-    title: req.body.title,
-    description: req.body.description,
-    published: req.body.published || false
+  // Create a user
+  const user = new User({
+    firstname : req.body.firstname,
+    lastname : req.body.lastname,
+    email : req.body.email,
+    password : req.body.password,
+    firstconnection : req.body.firstconnection || true
   });
 
-  // Save Tutorial in the database
-  Tutorial.create(tutorial, (err, data) => {
+  // Save user in the database
+  User.create(user, (err, data) => {
     if (err)
       res.status(500).send({
         message:
-          err.message || "Some error occurred while creating the Tutorial."
+          err.message || "Some error occurred while creating the user."
       });
     else res.send(data);
   });
 };
 
-// Retrieve all Tutorials from the database (with condition).
+// Retrieve all users from the database (with condition).
 exports.findAll = (req, res) => {
   const title = req.query.title;
 
-  Tutorial.getAll(title, (err, data) => {
+  User.getAll(title, (err, data) => {
     if (err)
       res.status(500).send({
         message:
-          err.message || "Some error occurred while retrieving tutorials."
+          err.message || "Some error occurred while retrieving users."
       });
     else res.send(data);
   });
 };
 
 exports.findAllPublished = (req, res) => {
-  Tutorial.getAllPublished((err, data) => {
+  User.getAllPublished((err, data) => {
     if (err)
       res.status(500).send({
         message:
-          err.message || "Some error occurred while retrieving tutorials."
+          err.message || "Some error occurred while retrieving users."
       });
     else res.send(data);
   });
 };
 
 
+
 exports.findOne = (req, res) => {
-  Tutorial.findById(req.params.id, (err, data) => {
+  User.findById(req.params.id, (err, data) => {
     if (err) {
       if (err.kind === "not_found") {
         res.status(404).send({
-          message: `Not found Tutorial with id ${req.params.id}.`
+          message: `Not found user with id ${req.params.id}.`
         });
       } else {
         res.status(500).send({
-          message: "Error retrieving Tutorial with id " + req.params.id
+          message: "Error retrieving user with id " + req.params.id
         });
       }
     } else res.send(data);
@@ -81,18 +83,18 @@ exports.update = (req, res) => {
 
   console.log(req.body);
 
-  Tutorial.updateById(
+  User.updateById(
     req.params.id,
-    new Tutorial(req.body),
+    new User(req.body),
     (err, data) => {
       if (err) {
         if (err.kind === "not_found") {
           res.status(404).send({
-            message: `Not found Tutorial with id ${req.params.id}.`
+            message: `Not found user with id ${req.params.id}.`
           });
         } else {
           res.status(500).send({
-            message: "Error updating Tutorial with id " + req.params.id
+            message: "Error updating user with id " + req.params.id
           });
         }
       } else res.send(data);
@@ -101,29 +103,34 @@ exports.update = (req, res) => {
 };
 
 exports.delete = (req, res) => {
-  Tutorial.remove(req.params.id, (err, data) => {
+  User.remove(req.params.id, (err, data) => {
     if (err) {
       if (err.kind === "not_found") {
         res.status(404).send({
-          message: `Not found Tutorial with id ${req.params.id}.`
+          message: `Not found user with id ${req.params.id}.`
         });
       } else {
         res.status(500).send({
-          message: "Could not delete Tutorial with id " + req.params.id
+          message: "Could not delete user with id " + req.params.id
         });
       }
-    } else res.send({ message: `Tutorial was deleted successfully!` });
+    } else res.send({ message: `User was deleted successfully!` });
   });
 };
 
+
+
 exports.deleteAll = (req, res) => {
-  Tutorial.removeAll((err, data) => {
+  User.removeAll((err, data) => {
     if (err)
       res.status(500).send({
         message:
-          err.message || "Some error occurred while removing all tutorials."
+          err.message || "Some error occurred while removing all users."
       });
-    else res.send({ message: `All Tutorials were deleted successfully!` });
+    else res.send({ message: `All users were deleted successfully!` });
   });
 };
+
+
+
 
